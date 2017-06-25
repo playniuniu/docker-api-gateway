@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import docker
+import logging
 
 docker_client = None
 
@@ -35,13 +36,14 @@ def get_docker_version():
 
 
 def run_container(form_data):
-    image_name = 'playniuniu/weblogic-domain:12.2.1.2'
-    ports = {"8001": "8005"}
+    image, ports, env_list = parse_deploy_args(form_data)
 
     try:
+        logging.info("create {} with env: {}, port: {}".format(image, env_list, ports))
         container_info = docker_client.containers.run(
-            image_name, ports=ports, detach=True)
+            image, environment=env_list, ports=ports, detach=True)
     except docker.errors.APIError as e:
+        logging.error(e)
         container_info = None
 
     if container_info:
@@ -71,6 +73,20 @@ def parse_container_info(container_obj):
         'status': container_obj.status,
     }
     return res
+
+
+def parse_deploy_args(form_data):
+    image = 'playniuniu/weblogic-domain:12.2.1.2'
+    port = form_data.get("port", "8001")
+    domain = form_data.get("domain", "base_domain")
+    password = form_data.get("password", "welcome1")
+
+    ports = {port: port}
+    env_list = [
+        "DOMAIN_NAME={}".format(domain),
+        "ADMIN_PASSWORD={}".format(password)
+    ]
+    return image, ports, env_list
 
 
 def parse_container_log(log_str):
