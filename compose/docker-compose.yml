@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  apibackend:
+    image: playniuniu/docker-api-gateway
+    ports:
+        - '9011:9011'
+    environment:
+        - /var/run/docker.sock=/var/run/docker.sock 
+
+  fronted:
+    image: playniuniu/itkeeper
+    ports:
+        - '9010:9010'

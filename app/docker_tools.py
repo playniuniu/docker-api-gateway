@@ -7,7 +7,7 @@ docker_client = None
 
 def init_docker_client():
     global docker_client
-    docker_client = docker.from_env()
+    docker_client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 
 
 def get_container_list():
