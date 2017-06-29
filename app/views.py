@@ -73,7 +73,7 @@ async def route_websocket(request, ws, container_id):
 
         new_log_len = len(log_list)
 
-        if retry_time == 3:
+        if retry_time == 12:
             logging.info("stop log retry")
             return ""
 
